@@ -1,4 +1,4 @@
-# elephant-guard
+# elevision - Elephant Detection Dashboard
 
 ## Getting Started
 

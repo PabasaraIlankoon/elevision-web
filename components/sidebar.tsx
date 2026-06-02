@@ -23,7 +23,7 @@ export function Sidebar() {
             <span className="text-xl font-bold text-primary-foreground">E</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-sidebar-foreground">ElephantGuard</h1>
+            <h1 className="text-lg font-bold text-sidebar-foreground">Elevision</h1>
             <p className="text-xs text-sidebar-foreground/60">Wildlife Monitor</p>
           </div>
         </div>

@@ -13,7 +13,7 @@ export function TopBar() {
           </button>
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-amber-400" />
-            <h1 className="hidden sm:block text-lg font-bold text-amber-400">ElephantGuard</h1>
+            <h1 className="hidden sm:block text-lg font-bold text-amber-400">Elevision</h1>
           </div>
         </div>
 

@@ -22,7 +22,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'ElephantGuard - Elephant Detection Dashboard',
+  title: 'Elevision - Elephant Detection Dashboard',
   description: 'Real-time wildlife monitoring and elephant detection system',
   generator: 'v0.app',
   icons: {

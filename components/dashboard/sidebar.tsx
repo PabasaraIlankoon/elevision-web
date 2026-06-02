@@ -26,7 +26,7 @@ export function Sidebar() {
     <nav className="hidden md:flex flex-col w-64 border-r border-border bg-sidebar text-sidebar-foreground h-screen sticky top-0 z-40">
       {/* Header */}
       <div className="p-6 border-b border-sidebar-border">
-        <h1 className="text-lg font-bold text-amber-400">ElephantGuard</h1>
+        <h1 className="text-lg font-bold text-amber-400">Elevision</h1>
         <p className="text-xs text-muted-foreground mt-1">Detection System</p>
       </div>
 

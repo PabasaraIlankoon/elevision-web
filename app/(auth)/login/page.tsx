@@ -47,7 +47,7 @@ export default function LoginPage() {
 
           {/* Title */}
           <h1 className="text-2xl font-bold text-center text-foreground mb-2">
-            ElephantGuard
+            Elevision
           </h1>
           <p className="text-xs text-center text-muted-foreground mb-6 uppercase tracking-widest">
             Authorized Personnel Only
@@ -64,7 +64,7 @@ export default function LoginPage() {
                 type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="operator@elephantguard.local"
+                placeholder="operator@elevision.local"
                 className="w-full px-4 py-2 rounded-lg border border-border bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-colors"
               />
             </div>
