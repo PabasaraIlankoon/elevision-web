@@ -1,24 +1,50 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate auth delay
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 1000);
+    setError(null);
+
+    try {
+      const supabase = createClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError(signInError.message);
+        return;
+      }
+
+      const next =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("next")
+          : null;
+      router.push(next || "/dashboard");
+      router.refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to sign in. Check your Supabase configuration.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,8 +56,23 @@ export default function LoginPage() {
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
         >
-          <line x1="0" y1="50" x2="100" y2="50" stroke="#F59E0B" strokeWidth="0.5" />
-          <line x1="0" y1="50" x2="100" y2="50" stroke="#F59E0B" strokeWidth="0.5" strokeDasharray="2,2" />
+          <line
+            x1="0"
+            y1="50"
+            x2="100"
+            y2="50"
+            stroke="#F59E0B"
+            strokeWidth="0.5"
+          />
+          <line
+            x1="0"
+            y1="50"
+            x2="100"
+            y2="50"
+            stroke="#F59E0B"
+            strokeWidth="0.5"
+            strokeDasharray="2,2"
+          />
         </svg>
       </div>
 
@@ -56,7 +97,10 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-foreground mb-2">
+              <label
+                htmlFor="email"
+                className="block text-xs font-medium text-foreground mb-2"
+              >
                 Username / Email
               </label>
               <input
@@ -70,7 +114,10 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-medium text-foreground mb-2">
+              <label
+                htmlFor="password"
+                className="block text-xs font-medium text-foreground mb-2"
+              >
                 Password
               </label>
               <input
@@ -90,6 +137,12 @@ export default function LoginPage() {
             >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
+
+            {error && (
+              <p className="text-xs text-red-400 border border-red-500/30 bg-red-500/10 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
           </form>
 
           {/* Footer */}
@@ -98,10 +151,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Demo Credentials */}
+        {/* Note */}
         <div className="mt-4 p-4 rounded-lg border border-border bg-card/50">
-          <p className="text-xs font-mono text-muted-foreground">
-            <span className="block">Demo: operator / password</span>
+          <p className="text-xs text-muted-foreground">
+            Use the Supabase Auth email/password credentials you created.
           </p>
         </div>
       </div>
