@@ -76,13 +76,8 @@ export function TopBar() {
                 })}
               </nav>
 
-              <SheetFooter className="border-t border-border">
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-foreground hover:bg-red-500/10 hover:text-red-400 transition-colors"
-                >
-                  <span className="text-sm font-medium">Logout</span>
-                </button>
+              <SheetFooter className="border-t border-border p-4">
+                <p className="text-xs text-muted-foreground">Elevision v1.0</p>
               </SheetFooter>
             </SheetContent>
           </Sheet>
@@ -100,9 +95,9 @@ export function TopBar() {
             <Bell className="w-5 h-5 text-muted-foreground hover:text-foreground" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
           </button>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+          {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
             <span className="text-xs font-bold text-black">OP</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>
