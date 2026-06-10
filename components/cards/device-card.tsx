@@ -29,7 +29,16 @@ export function DeviceCard({ device }: DeviceCardProps) {
         </div>
         <div className="flex justify-between text-muted-foreground">
           <span>Last Ping</span>
-          <span className="font-mono text-foreground">{device.last_ping}</span>
+          <span className="font-mono text-foreground">
+            {device.last_ping
+              ? new Date(device.last_ping).toLocaleString([], {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "Never"}
+          </span>
         </div>
         <div className="flex justify-between text-muted-foreground">
           <span>Camera Status</span>
