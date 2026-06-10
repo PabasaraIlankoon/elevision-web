@@ -17,7 +17,7 @@ export function AlertCard({ detection, index = 0 }: AlertCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
+      transition={{ delay: Math.min(index * 0.05, 0.3) }}
       className={`rounded-lg border p-4 ${
         detection.status === "active"
           ? "border-red-500/30 bg-red-500/5"
