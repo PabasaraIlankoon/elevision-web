@@ -231,7 +231,7 @@ export default function AnalyticsPage() {
                   cy="50%"
                   labelLine={false}
                   label={({ location, percent }) =>
-                    `${location} ${(percent * 100).toFixed(0)}%`
+                    `${location.length > 12 ? location.slice(0, 11) + "…" : location} ${(percent * 100).toFixed(0)}%`
                   }
                   outerRadius={80}
                   fill="#8884d8"
@@ -260,7 +260,7 @@ export default function AnalyticsPage() {
         {/* Confidence Timeline */}
         <div className="rounded-lg border border-border bg-card p-4">
           <h2 className="text-sm font-semibold text-foreground mb-4">
-            Detection Confidence Timeline (24h)
+            Avg Detection Confidence by Hour (last 30 days)
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={confidenceData}>
@@ -286,10 +286,10 @@ export default function AnalyticsPage() {
                   borderRadius: "8px",
                 }}
                 labelStyle={{ color: "#F3F4F6" }}
-                formatter={(value) => [
-                  (value * 100).toFixed(1) + "%",
-                  "Confidence",
-                ]}
+                formatter={(value) => {
+                  const num = Number(value);
+                  return [num === 0 ? "No data" : (num * 100).toFixed(1) + "%", "Confidence"];
+                }}
               />
               <Line
                 type="monotone"
