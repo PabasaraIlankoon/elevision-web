@@ -1,29 +1,29 @@
-export type DetectionStatus = "active" | "resolved";
-export type AnimalType = "elephant";
+export type AlertStatus = "new" | "seen";
 
-export interface Detection {
+export interface Alert {
   id: string;
-  device_id: string;
-  location_name: string | null;
+  timestampMs: number;
+  imageUrl: string;
+  confidence: number;
+  deviceId: string;
+  locationName: string | null;
   latitude: number | null;
   longitude: number | null;
-  animal: AnimalType;
-  confidence: number;
-  detection_time: string;
-  image_url: string | null;
-  status: DetectionStatus;
+  status: AlertStatus;
 }
 
 export type DeviceStatus = "online" | "offline";
-export type CameraStatus = "active" | "inactive";
 
 export interface Device {
-  device_id: string;
-  location_name: string;
+  deviceId: string;
+  name: string;
   latitude: number;
   longitude: number;
   status: DeviceStatus;
-  last_ping: string | null;
-  camera_status: CameraStatus;
-  uptime_percent: number;
+}
+
+export interface SystemStatus {
+  armed: boolean;
+  updatedAt?: unknown;
+  updatedBy?: string;
 }
