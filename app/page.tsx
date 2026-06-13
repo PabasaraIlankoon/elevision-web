@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Shield, Radio, Map, BarChart3, Zap, Eye } from "lucide-react";
 
 export default function Page() {
@@ -6,11 +7,11 @@ export default function Page() {
     <main className="min-h-screen bg-background grid-bg text-foreground">
       {/* Nav */}
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
           <Link href="/">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-amber-400" />
-              <span className="text-lg font-bold text-amber-400">
+              <Image src="/elevision-logo.png" alt="Elevision" width={60} height={60} className="rounded-md" />
+              <span className="text-2xl sm:block hidden font-bold text-amber-400">
                 Elevision
               </span>
             </div>

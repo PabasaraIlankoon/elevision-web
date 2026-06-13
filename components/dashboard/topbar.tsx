@@ -1,7 +1,8 @@
 "use client";
 
-import { Bell, Shield, Menu } from "lucide-react";
+import { Shield, Menu } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Sheet,
@@ -18,10 +19,10 @@ export function TopBar() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-border bg-card sticky top-0 z-30">
+    <header className="md:hidden border-b border-border bg-card sticky top-0 z-30">
       <div className="h-16 px-4 md:px-6 flex items-center justify-between scan-line">
         {/* Left — hamburger + logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full justify-between">
           <Sheet>
             <SheetTrigger asChild>
               <button
@@ -40,18 +41,28 @@ export function TopBar() {
             */}
             <SheetContent
               side="left"
-              className="dark p-0 border-r border-[hsl(216,20%,18%)] w-[280px]"
+              className="dark p-0 border-r border-[hsl(216,20%,18%)] w-70"
               style={{ backgroundColor: "hsl(0, 0%, 100%)" }}
             >
               {/* Header */}
-              <SheetHeader className="px-6 py-5 border-b border-[hsl(216,20%,18%)]">
-                <SheetTitle className="flex items-center gap-2 text-amber-400 text-lg font-bold">
-                  <Shield className="w-5 h-5 text-amber-400" />
-                  Elevision
+              <SheetHeader className="flex flex-row gap-4 items-center px-4 py-5 border-b border-[hsl(216,20%,18%)]">
+                <SheetTitle className="flex items-center gap-2">
+                  <Image
+                    src="/elevision-logo.png"
+                    alt="Elevision"
+                    width={60}
+                    height={60}
+                    className="rounded-md"
+                  />
                 </SheetTitle>
-                <p className="text-xs text-[hsl(0, 0%, 0%)] mt-0.5 font-normal">
-                  Detection System
-                </p>
+                <div className="flex flex-col gap-1">
+                  <span className="text-amber-400 text-lg font-bold">
+                    Elevision
+                  </span>
+                  <p className="text-xs text-[hsl(0, 0%, 0%)] mt-0.5 font-normal">
+                    Elephant Detection System
+                  </p>
+                </div>
               </SheetHeader>
 
               {/* Nav */}
@@ -72,7 +83,7 @@ export function TopBar() {
                             : "text-[hsl(216,20%,18%)] hover:bg-[hsl(216,20%,14%)] hover:text-white"
                         }`}
                       >
-                        <Icon className="w-4 h-4 flex-shrink-0" />
+                        <Icon className="w-4 h-4 shrink-0" />
                         <span>{item.label}</span>
                       </Link>
                     </SheetClose>
@@ -90,20 +101,16 @@ export function TopBar() {
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-amber-400" />
-              <h1 className="hidden sm:block text-lg font-bold text-amber-400">
-                Elevision
-              </h1>
+              <h1 className="text-lg font-bold text-amber-400">Elevision</h1>
+              <Image
+                src="/elevision-logo.png"
+                alt="Elevision"
+                width={45}
+                height={45}
+                className="rounded-md"
+              />
             </div>
           </Link>
-        </div>
-
-        {/* Right — bell */}
-        <div className="flex items-center gap-4">
-          <button className="relative p-2 hover:bg-muted rounded-lg transition-colors">
-            <Bell className="w-5 h-5 text-muted-foreground hover:text-foreground" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-          </button>
         </div>
       </div>
     </header>

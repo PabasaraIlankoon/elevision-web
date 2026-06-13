@@ -4,9 +4,10 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { MapPin } from "lucide-react";
 import { DeviceStatusBadge } from "@/components/badges/device-status-badge";
-import type { Detection, Device } from "@/lib/types";
-import { createClient } from "@/lib/supabase/client";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import type { Alert, Device } from "@/lib/types";
+import { isFirebaseConfigured } from "@/lib/firebase/config";
+import { subscribeAlerts } from "@/lib/firebase/alerts";
+import { subscribeDevices } from "@/lib/firebase/devices";
 
 const DeviceMap = dynamic(
   () => import("@/components/dashboard/device-map").then((m) => m.DeviceMap),
@@ -23,112 +24,73 @@ const DeviceMap = dynamic(
 export default function MapPage() {
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [devices, setDevices] = useState<Device[]>([]);
-  const [detections, setDetections] = useState<Detection[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
+    if (!isFirebaseConfigured()) {
       setLoading(false);
-      setError("Supabase is not configured. Add env vars to .env.local.");
+      setError("Firebase is not configured. Add env vars to .env.local.");
       return;
     }
 
-    const supabase = createClient();
-    let isCancelled = false;
+    setLoading(true);
+    setError(null);
 
-    const load = async () => {
-      setLoading(true);
-      setError(null);
+    const unsubAlerts = subscribeAlerts(
+      (data) => {
+        setAlerts(data);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err.message);
+        setLoading(false);
+      },
+    );
 
-      const [
-        { data: devicesData, error: devicesError },
-        { data: detectionsData, error: detectionsError },
-      ] = await Promise.all([
-        supabase
-          .from("devices")
-          .select(
-            "device_id, location_name, latitude, longitude, status, last_ping, camera_status, uptime_percent",
-          )
-          .order("device_id", { ascending: true }),
-        supabase
-          .from("detections")
-          .select(
-            "id, device_id, location_name, latitude, longitude, animal, confidence, detection_time, image_url, status",
-          )
-          .order("detection_time", { ascending: false })
-          .limit(500),
-      ]);
-
-      if (isCancelled) return;
-
-      if (devicesError || detectionsError) {
-        setError(
-          devicesError?.message ||
-            detectionsError?.message ||
-            "Failed to load map data",
-        );
-        setDevices([]);
-        setDetections([]);
-      } else {
-        setDevices((devicesData as Device[]) || []);
-        setDetections((detectionsData as Detection[]) || []);
-      }
-
-      setLoading(false);
-    };
-
-    load();
-
-    const channel = supabase
-      .channel("map-detections")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "detections" },
-        (payload) => {
-          const inserted = payload.new as Detection;
-          setDetections((prev) => [inserted, ...prev].slice(0, 500));
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "detections" },
-        (payload) => {
-          const updated = payload.new as Detection;
-          setDetections((prev) =>
-            prev.map((d) => (d.id === updated.id ? updated : d)),
-          );
-        },
-      )
-      .subscribe();
+    const unsubDevices = subscribeDevices(
+      (data) => setDevices(data),
+      (err) => setError((prev) => prev ?? err.message),
+    );
 
     return () => {
-      isCancelled = true;
-      supabase.removeChannel(channel);
+      unsubAlerts();
+      unsubDevices();
     };
   }, []);
 
   const latestByDevice = useMemo(() => {
-    const map = new Map<string, Detection>();
-    for (const det of detections) {
-      if (!map.has(det.device_id)) map.set(det.device_id, det);
+    const map = new Map<string, Alert>();
+    for (const a of alerts) {
+      if (!map.has(a.deviceId)) map.set(a.deviceId, a);
     }
     return map;
-  }, [detections]);
+  }, [alerts]);
+
+  if (error) {
+    return (
+      <div className="grid-bg h-full">
+        <div className="p-4 md:p-6">
+          <h1 className="text-xl font-bold text-foreground mb-4">
+            Sri Lanka Railway Zone Map
+          </h1>
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid-bg h-full">
       <div className="flex h-full">
         {/* Map */}
         <div className="flex-1 relative bg-card overflow-hidden">
-          {error && (
-            <div className="absolute top-4 left-4 right-4 z-20 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-              {error}
-            </div>
-          )}
           <DeviceMap
             devices={devices}
-            detections={detections}
+            alerts={alerts}
             selectedDeviceId={selectedDevice}
             onSelectDevice={setSelectedDevice}
           />
@@ -150,13 +112,13 @@ export default function MapPage() {
 
           <div className="divide-y divide-border">
             {devices.map((device) => {
-              const detection = latestByDevice.get(device.device_id);
-              const isSelected = selectedDevice === device.device_id;
+              const alert = latestByDevice.get(device.deviceId);
+              const isSelected = selectedDevice === device.deviceId;
 
               return (
                 <button
-                  key={device.device_id}
-                  onClick={() => setSelectedDevice(device.device_id)}
+                  key={device.deviceId}
+                  onClick={() => setSelectedDevice(device.deviceId)}
                   className={`w-full text-left p-4 transition-colors ${
                     isSelected
                       ? "bg-amber-400/10 border-l-2 border-amber-400"
@@ -165,19 +127,19 @@ export default function MapPage() {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <p className="text-xs font-mono text-muted-foreground">
-                      {device.device_id}
+                      {device.deviceId}
                     </p>
                     <DeviceStatusBadge status={device.status} />
                   </div>
                   <p className="text-xs font-semibold text-foreground">
-                    {device.location_name}
+                    {device.name}
                   </p>
-                  {detection && (
+                  {alert && (
                     <p className="text-xs text-red-400 mt-1">
-                      {detection.status === "active"
-                        ? "Active detection"
+                      {alert.status === "new"
+                        ? "Active alert"
                         : "Last: " +
-                          new Date(detection.detection_time).toLocaleString()}
+                          new Date(alert.timestampMs).toLocaleString()}
                     </p>
                   )}
                 </button>

@@ -43,7 +43,7 @@ export function AlertCard({
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
-          <AlertTriangle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
+          <AlertTriangle className={`w-5 h-5 mt-0.5 shrink-0 ${
             severity === 'critical' ? 'text-red-500' :
             severity === 'high' ? 'text-yellow-500' :
             'text-orange-500'

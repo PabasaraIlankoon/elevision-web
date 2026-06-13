@@ -1,119 +1,116 @@
-# Elevision - Elephant Detection Dashboard
+# Elevision — Web Dashboard
 
-This is the admin dashboard for an AI-based railway safety + elephant detection system.
+Real-time AI-powered elephant detection dashboard for railway safety. This Next.js app is the web counterpart to the Elevision Flutter mobile app and the Raspberry Pi detection nodes, all sharing a single Firebase project.
 
-## Local dev
+## Features
+
+- **Live dashboard** — active alert hero with image, location, device ID, confidence, and one-tap acknowledge
+- **Alert History** — full feed of past detections with date filtering and CSV export
+- **Alert Detail** — detection image, confidence breakdown, device/location/coordinates, embedded map, train risk assessment, mark as reviewed, download image
+- **Map** — Sri Lanka railway zone map showing all device locations and active alerts (Leaflet + OpenStreetMap)
+- **Devices** — online/offline status and coordinates for every detection node
+- **Train Schedule** — high-risk train schedules near the elephant corridor, with live "approaching" risk assessment
+- **Analytics** — detection trends, confidence stats, and top-detecting devices
+
+No login/authentication is required — this dashboard is intended as a publicly viewable operations view.
+
+## Tech stack
+
+- [Next.js](https://nextjs.org/) (App Router) + TypeScript
+- [Firebase Firestore](https://firebase.google.com/docs/firestore) — real-time data (alerts, device status)
+- [Tailwind CSS](https://tailwindcss.com/) — styling
+- [react-leaflet](https://react-leaflet.js.org/) — map
+- [Recharts](https://recharts.org/) — analytics charts
+- [Framer Motion](https://www.framer.com/motion/) — UI animation
+- [lucide-react](https://lucide.dev/) — icons
+
+## Getting started
+
+### 1. Install dependencies
 
 ```bash
 npm install
+```
+
+### 2. Configure Firebase
+
+Copy the example env file:
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in `.env.local` with your Firebase **web app** config from the [Firebase Console](https://console.firebase.google.com/) → Project Settings → Your apps → Web app (project `elevision-606a9`):
+
+```dotenv
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=elevision-606a9.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=elevision-606a9
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=elevision-606a9.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=863719577998
+NEXT_PUBLIC_FIREBASE_APP_ID=your-web-app-id
+```
+
+> If you haven't registered a web app yet: Firebase Console → Project Settings → "Your apps" → **Add app** → Web → give it a nickname (e.g. "Elevision Web Dashboard") → copy the generated config values above.
+
+**Important:** all variables must be prefixed with `NEXT_PUBLIC_` and the dev server must be **fully restarted** (not hot-reloaded) after changing `.env.local`.
+
+### 3. Run the dev server
+
+```bash
 npm run dev
 ```
 
-Open http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000).
 
-## Supabase setup (Auth + DB + Storage + Realtime)
+## Data model
 
-1. Create a Supabase project.
+The web dashboard reads from the same Firestore database as the Pi nodes and Flutter app:
 
-2. Create the database tables + RLS policies
+| Collection / Document | Purpose |
+| --- | --- |
+| `alerts/{alertId}` | Each detection event: `timestampMs`, `imageUrl`, `confidence`, `deviceId`, `locationName`, `latitude`, `longitude`, `status` (`new` \| `seen`) |
+| `system/devices` | Single flattened doc with `{deviceId}_lat`, `{deviceId}_lng`, `{deviceId}_name`, `{deviceId}_status` keys for every registered device |
 
-- Open Supabase Dashboard → SQL Editor
-- Run: `supabase/schema.sql`
+Detection nodes (Raspberry Pi) write directly to Firestore via `firebase-admin`. The web app only reads `alerts` and `system/devices`, and writes the `status` field on `alerts` (for Acknowledge / Mark as Reviewed).
 
-3. Create a storage bucket for images
+## Firestore rules & deployment
 
-- Storage → New bucket → name: `detections`
-- Make it **Public** (simplest for the dashboard).
-
-4. Add environment variables
-
-Create `.env.local` (do not commit it) with:
+Rules live in `firestore.rules` and allow public read of alerts/device status, with writes restricted to toggling an alert's `status`:
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
+firebase login
+firebase use elevision-606a9
+firebase deploy --only firestore:rules
 ```
 
-Notes:
+## Train schedule data
 
-- `NEXT_PUBLIC_*` values are used by the browser dashboard.
-- `SUPABASE_SERVICE_ROLE_KEY` is used only by server routes (device ingestion). Never expose it to clients.
+High-risk train schedules near Gal Oya Junction are defined in `lib/trains/schedule.ts`, ported from the Flutter app's train model. Update this file if schedules change — no Firestore collection is involved.
 
-5. Create a dashboard user
+## Project structure
 
-- Authentication → Users → Add user
-- Use that email/password in `/login`.
-
-6. Register a device row
-
-The device API authenticates using a device key (sent in `x-device-key`). The DB stores the SHA-256 hash.
-
-Example (Linux/macOS):
-
-```bash
-echo -n "MY_DEVICE_KEY" | sha256sum
+```
+app/
+  dashboard/
+    page.tsx              # Main dashboard (active alert + stats)
+    history/              # Alert history + CSV export
+    alerts/[id]/          # Alert detail page
+    map/                   # Device map
+    devices/               # Device status grid
+    trains/                # Train schedule
+    analytics-report/      # Analytics charts
+components/
+  cards/                   # Alert / device / stat cards
+  badges/                  # Confidence / device status badges
+  dashboard/               # Sidebar, topbar, map
+  branding/                # Logo
+lib/
+  firebase/                # Firestore config + subscriptions
+  trains/                  # Train schedule data + helpers
+  types.ts                 # Shared TypeScript types
 ```
 
-Insert a device (SQL Editor):
+## Deployment
 
-```sql
-insert into public.devices (device_id, location_name, latitude, longitude, api_key_hash)
-values ('DEV-TEST-001', 'Test Zone', 7.8731, 80.7718, '<sha256 hex here>');
-```
-
-7. Enable realtime for detections
-
-- Database → Replication
-- Ensure `public.detections` is enabled for realtime.
-
-## Simulate a Raspberry Pi (no hardware needed)
-
-Start the dev server, then run:
-
-```bash
-DEVICE_ID=DEV-TEST-001 \
-DEVICE_KEY=MY_DEVICE_KEY \
-node scripts/simulate-device.mjs
-```
-
-To include an image:
-
-```bash
-DEVICE_ID=DEV-TEST-001 \
-DEVICE_KEY=MY_DEVICE_KEY \
-node scripts/simulate-device.mjs --image ./path/to/photo.jpg
-```
-
-## API (for Raspberry Pi)
-
-POST `/api/device-events`
-
-Headers:
-
-- `x-device-key: <device key>` (or `Authorization: Bearer <device key>`)
-
-Body examples:
-
-Ping:
-
-```json
-{
-  "event": "ping",
-  "device_id": "DEV-TEST-001",
-  "camera_status": "active",
-  "uptime_percent": 99.5
-}
-```
-
-Detection:
-
-```json
-{
-  "event": "detection",
-  "device_id": "DEV-TEST-001",
-  "confidence": 0.92,
-  "image_base64": "...",
-  "image_content_type": "image/jpeg"
-}
-```
+This is a standard Next.js app — deploy to [Vercel](https://vercel.com/), Firebase Hosting (with Cloud Functions for SSR), or any Node host. Set the same `NEXT_PUBLIC_FIREBASE_*` environment variables in your hosting provider's dashboard.
