@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   AlertCircle,
@@ -8,43 +9,36 @@ import {
   Map,
   Radio,
   BarChart3,
-  LogOut,
+  Train,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 export const NAV_ITEMS = [
-  { href: "/dashboard", icon: AlertCircle, label: "Alerts", exact: true },
-  { href: "/dashboard/history", icon: Clock, label: "History" },
+  { href: "/dashboard", icon: AlertCircle, label: "Dashboard", exact: true },
+  { href: "/dashboard/history", icon: Clock, label: "Alert History" },
   { href: "/dashboard/map", icon: Map, label: "Map" },
   { href: "/dashboard/devices", icon: Radio, label: "Devices" },
+  { href: "/dashboard/trains", icon: Train, label: "Train Schedule" },
   { href: "/dashboard/analytics-report", icon: BarChart3, label: "Analytics" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-    } catch {
-      // ignore
-    } finally {
-      router.push("/login");
-      router.refresh();
-    }
-  };
 
   return (
     <nav className="hidden md:flex flex-col w-64 border-r border-border bg-sidebar text-sidebar-foreground h-screen sticky top-0 z-40">
       {/* Header */}
       <div className="p-6 border-b border-sidebar-border">
-        <Link href="/">
-          <h1 className="text-lg font-bold text-amber-400">Elevision</h1>
+        <Link href="/" className="flex items-center gap-3">
+          <Image src="/elevision-logo.png" alt="Elevision" width={60} height={60} className="rounded-md" />
+          <div>
+            <h1 className="text-lg font-bold text-amber-400 leading-tight">
+              Elevision
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              Live Elephant Guard
+            </p>
+          </div>
         </Link>
-        <p className="text-xs text-muted-foreground mt-1">Detection System</p>
       </div>
 
       {/* Navigation */}
@@ -74,7 +68,7 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-sidebar-border">
-        <p className="text-xs text-muted-foreground">Elevision v1.0</p>
+        <p className="text-xs text-muted-foreground">Elevision v1.0.0</p>
       </div>
     </nav>
   );
