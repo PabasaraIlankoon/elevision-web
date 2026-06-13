@@ -8,7 +8,7 @@ import {
   TileLayer,
   useMap,
 } from "react-leaflet";
-import type { Detection, Device } from "@/lib/types";
+import type { Alert, Device } from "@/lib/types";
 
 function MapFocus({ device }: { device: Device | null }) {
   const map = useMap();
@@ -29,27 +29,27 @@ function MapFocus({ device }: { device: Device | null }) {
 
 interface DeviceMapProps {
   devices: Device[];
-  detections: Detection[];
+  alerts: Alert[];
   selectedDeviceId: string | null;
   onSelectDevice: (deviceId: string) => void;
 }
 
 export function DeviceMap({
   devices,
-  detections,
+  alerts,
   selectedDeviceId,
   onSelectDevice,
 }: DeviceMapProps) {
   const activeDeviceIds = useMemo(() => {
     const set = new Set<string>();
-    for (const det of detections) {
-      if (det.status === "active") set.add(det.device_id);
+    for (const a of alerts) {
+      if (a.status === "new") set.add(a.deviceId);
     }
     return set;
-  }, [detections]);
+  }, [alerts]);
 
   const selectedDevice = useMemo(
-    () => devices.find((d) => d.device_id === selectedDeviceId) || null,
+    () => devices.find((d) => d.deviceId === selectedDeviceId) || null,
     [devices, selectedDeviceId],
   );
 
@@ -64,7 +64,7 @@ export function DeviceMap({
             ? [selectedDevice.latitude, selectedDevice.longitude]
             : defaultCenter
         }
-        zoom={selectedDevice ? 11 : 7}
+        zoom={selectedDevice ? 11 : 8}
         scrollWheelZoom
         className="h-full w-full"
       >
@@ -76,15 +76,15 @@ export function DeviceMap({
         <MapFocus device={selectedDevice} />
 
         {devices.map((device) => {
-          const isActive = activeDeviceIds.has(device.device_id);
-          const isSelected = device.device_id === selectedDeviceId;
+          const isActive = activeDeviceIds.has(device.deviceId);
+          const isSelected = device.deviceId === selectedDeviceId;
 
-          const color = isActive ? "#ef4444" : "#f59e0b";
-          const fill = isActive ? "#ef4444" : "#f59e0b";
+          const color = isActive ? "#ef4444" : "#FF8C00";
+          const fill = isActive ? "#ef4444" : "#FF8C00";
 
           return (
             <CircleMarker
-              key={device.device_id}
+              key={device.deviceId}
               center={[device.latitude, device.longitude]}
               radius={isSelected ? 12 : 9}
               pathOptions={{
@@ -94,23 +94,21 @@ export function DeviceMap({
                 weight: isSelected ? 3 : 2,
               }}
               eventHandlers={{
-                click: () => onSelectDevice(device.device_id),
+                click: () => onSelectDevice(device.deviceId),
               }}
             >
               <Popup>
                 <div className="space-y-1">
-                  <div className="text-xs font-mono">{device.device_id}</div>
-                  <div className="text-sm font-semibold">
-                    {device.location_name}
-                  </div>
+                  <div className="text-xs font-mono">{device.deviceId}</div>
+                  <div className="text-sm font-semibold">{device.name}</div>
                   <div className="text-xs">
                     {device.latitude.toFixed(5)}, {device.longitude.toFixed(5)}
                   </div>
                   {isActive ? (
-                    <div className="text-xs text-red-600">Active detection</div>
+                    <div className="text-xs text-red-600">Active alert</div>
                   ) : (
                     <div className="text-xs text-muted-foreground">
-                      No active detection
+                      No active alert
                     </div>
                   )}
                 </div>

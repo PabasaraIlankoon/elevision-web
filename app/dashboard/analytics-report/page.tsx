@@ -18,50 +18,40 @@ import {
 } from "recharts";
 import { Clock, TrendingUp, Target, Zap } from "lucide-react";
 import { StatCard } from "@/components/cards/stat-card";
-import type { Detection } from "@/lib/types";
-import { createClient } from "@/lib/supabase/client";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import type { Alert } from "@/lib/types";
+import { isFirebaseConfigured } from "@/lib/firebase/config";
+import { subscribeAlerts } from "@/lib/firebase/alerts";
 
 export default function AnalyticsPage() {
-  const [detections, setDetections] = useState<Detection[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const load = async () => {
-      if (!isSupabaseConfigured()) {
-        setLoading(false);
-        setError("Supabase is not configured. Add env vars to .env.local.");
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      const supabase = createClient();
-      const since = new Date();
-      since.setDate(since.getDate() - 30);
-
-      const { data, error: loadError } = await supabase
-        .from("detections")
-        .select(
-          "id, device_id, location_name, latitude, longitude, animal, confidence, detection_time, image_url, status",
-        )
-        .gte("detection_time", since.toISOString())
-        .order("detection_time", { ascending: false })
-        .limit(5000);
-
-      if (loadError) {
-        setError(loadError.message);
-        setDetections([]);
-      } else {
-        setDetections((data as Detection[]) || []);
-      }
-
+    if (!isFirebaseConfigured()) {
       setLoading(false);
-    };
+      setError("Firebase is not configured. Add env vars to .env.local.");
+      return;
+    }
 
-    load();
+    setLoading(true);
+    setError(null);
+
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
+    const unsub = subscribeAlerts(
+      (data) => {
+        setAlerts(data.filter((a) => a.timestampMs >= cutoff));
+        setLoading(false);
+      },
+      (err) => {
+        setError(err.message);
+        setLoading(false);
+      },
+      500,
+    );
+
+    return () => unsub();
   }, []);
 
   const { dailyData, locationData, confidenceData, stats } = useMemo(() => {
@@ -83,8 +73,8 @@ export default function AnalyticsPage() {
     let confidenceSum = 0;
     let confidenceN = 0;
 
-    for (const det of detections) {
-      const t = new Date(det.detection_time);
+    for (const alert of alerts) {
+      const t = new Date(alert.timestampMs);
       if (Number.isNaN(t.getTime())) continue;
 
       const key = dayKey(t);
@@ -92,15 +82,15 @@ export default function AnalyticsPage() {
         dailyCounts.set(key, (dailyCounts.get(key) || 0) + 1);
       }
 
-      const loc = det.location_name || det.device_id;
+      const loc = alert.locationName || alert.deviceId;
       locationCounts.set(loc, (locationCounts.get(loc) || 0) + 1);
 
       const hr = t.getHours();
       hourCounts[hr] += 1;
-      hourConfidenceSum[hr] += det.confidence;
+      hourConfidenceSum[hr] += alert.confidence;
       hourConfidenceN[hr] += 1;
 
-      confidenceSum += det.confidence;
+      confidenceSum += alert.confidence;
       confidenceN += 1;
     }
 
@@ -130,7 +120,7 @@ export default function AnalyticsPage() {
 
     const mostActive = locationDataArr[0]?.location || "N/A";
     const avgConfidence = confidenceN ? confidenceSum / confidenceN : 0;
-    const totalDetections = detections.length;
+    const totalDetections = alerts.length;
 
     return {
       dailyData: dailyDataArr,
@@ -143,9 +133,9 @@ export default function AnalyticsPage() {
         totalDetections,
       },
     };
-  }, [detections]);
+  }, [alerts]);
 
-  const COLORS = ["#F59E0B", "#10B981", "#EF4444", "#3B82F6", "#8B5CF6"];
+  const COLORS = ["#FF8C00", "#16A34A", "#DC2626", "#1E40AF", "#8B5CF6"];
 
   return (
     <div className="grid-bg">
@@ -213,7 +203,7 @@ export default function AnalyticsPage() {
                   }}
                   labelStyle={{ color: "#F3F4F6" }}
                 />
-                <Bar dataKey="count" fill="#F59E0B" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="count" fill="#FF8C00" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -294,7 +284,7 @@ export default function AnalyticsPage() {
               <Line
                 type="monotone"
                 dataKey="confidence"
-                stroke="#F59E0B"
+                stroke="#FF8C00"
                 dot={false}
                 strokeWidth={2}
               />

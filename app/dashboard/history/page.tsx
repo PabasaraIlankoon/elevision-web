@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Download, Filter } from "lucide-react";
 import { AlertCard } from "@/components/cards/alert-card";
 import { Button } from "@/components/ui/button";
-import type { Detection } from "@/lib/types";
-import { createClient } from "@/lib/supabase/client";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import type { Alert } from "@/lib/types";
+import { isFirebaseConfigured } from "@/lib/firebase/config";
+import { subscribeAlerts } from "@/lib/firebase/alerts";
 
 export default function HistoryPage() {
-  const [detections, setDetections] = useState<Detection[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fromDate, setFromDate] = useState<string>("");
@@ -18,75 +18,65 @@ export default function HistoryPage() {
   const [appliedTo, setAppliedTo] = useState<string>("");
 
   useEffect(() => {
-    const load = async () => {
-      if (!isSupabaseConfigured()) {
-        setLoading(false);
-        setError("Supabase is not configured. Add env vars to .env.local.");
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      const supabase = createClient();
-      const { data, error: loadError } = await supabase
-        .from("detections")
-        .select(
-          "id, device_id, location_name, latitude, longitude, animal, confidence, detection_time, image_url, status",
-        )
-        .order("detection_time", { ascending: false })
-        .limit(500);
-
-      if (loadError) {
-        setError(loadError.message);
-        setDetections([]);
-      } else {
-        setDetections((data as Detection[]) || []);
-      }
-
+    if (!isFirebaseConfigured()) {
       setLoading(false);
-    };
+      setError("Firebase is not configured. Add env vars to .env.local.");
+      return;
+    }
 
-    load();
+    setLoading(true);
+    setError(null);
+
+    // History view shows more than the dashboard's 50; bump the limit.
+    const unsub = subscribeAlerts(
+      (data) => {
+        setAlerts(data);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err.message);
+        setLoading(false);
+      },
+      500,
+    );
+
+    return () => unsub();
   }, []);
 
-  const filteredDetections = useMemo(() => {
-    const from = appliedFrom ? new Date(appliedFrom + "T00:00:00") : null;
-    const to = appliedTo ? new Date(appliedTo + "T23:59:59") : null;
+  const filteredAlerts = useMemo(() => {
+    const from = appliedFrom ? new Date(appliedFrom + "T00:00:00").getTime() : null;
+    const to = appliedTo ? new Date(appliedTo + "T23:59:59").getTime() : null;
 
-    return detections.filter((det) => {
-      const t = new Date(det.detection_time);
-      if (from && t < from) return false;
-      if (to && t > to) return false;
+    return alerts.filter((a) => {
+      if (from && a.timestampMs < from) return false;
+      if (to && a.timestampMs > to) return false;
       return true;
     });
-  }, [detections, appliedFrom, appliedTo]);
+  }, [alerts, appliedFrom, appliedTo]);
 
   const exportCsv = () => {
     const headers = [
       "id",
-      "device_id",
-      "location_name",
+      "deviceId",
+      "locationName",
       "latitude",
       "longitude",
-      "animal",
       "confidence",
-      "detection_time",
+      "timestampMs",
       "status",
-      "image_url",
+      "imageUrl",
     ];
 
-    const rows = filteredDetections.map((d) => [
-      d.id,
-      d.device_id,
-      d.location_name ?? "",
-      d.latitude ?? "",
-      d.longitude ?? "",
-      d.animal,
-      d.confidence,
-      d.detection_time,
-      d.status,
-      d.image_url ?? "",
+    const rows = filteredAlerts.map((a) => [
+      a.id,
+      a.deviceId,
+      a.locationName ?? "",
+      a.latitude ?? "",
+      a.longitude ?? "",
+      a.confidence,
+      a.timestampMs,
+      a.status,
+      a.imageUrl ?? "",
     ]);
 
     const escape = (value: unknown) => {
@@ -103,7 +93,7 @@ export default function HistoryPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `detections_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `alerts_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -126,12 +116,12 @@ export default function HistoryPage() {
               Detection History
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {filteredDetections.length} detections recorded
+              {filteredAlerts.length} alerts recorded
             </p>
           </div>
           <Button
             onClick={exportCsv}
-            disabled={loading || filteredDetections.length === 0}
+            disabled={loading || filteredAlerts.length === 0}
             className="gap-2 bg-amber-400 hover:bg-amber-500 text-black font-semibold"
           >
             <Download className="w-4 h-4" />
@@ -171,16 +161,16 @@ export default function HistoryPage() {
           </button>
         </div>
 
-        {/* Detection List */}
+        {/* Alert List */}
         <div className="space-y-3">
-          {!loading && filteredDetections.length === 0 ? (
+          {!loading && filteredAlerts.length === 0 ? (
             <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-              No detections for the selected range.
+              No alerts for the selected range.
             </div>
           ) : (
-            filteredDetections.map((detection, index) => (
-              <div key={detection.id} id={detection.id}>
-                <AlertCard detection={detection} index={index} />
+            filteredAlerts.map((alert, index) => (
+              <div key={alert.id} id={alert.id}>
+                <AlertCard alert={alert} index={index} />
               </div>
             ))
           )}
