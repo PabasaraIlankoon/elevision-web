@@ -37,9 +37,7 @@ export default function Page() {
           <span className="text-blue-600 dark:text-blue-400">Save Elephants.</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
-          AI-powered detection system using Raspberry Pi and YOLO to detect
-          elephants near railway tracks in real time — preventing collisions
-          before they happen.
+          AI-Based Elephant Detection and Real-Time Early Warning System For Sri Lankan Railway Tracks
         </p>
         <Link
           href="/dashboard"
