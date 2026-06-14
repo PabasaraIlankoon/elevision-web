@@ -119,7 +119,7 @@ export default function AlertDetailPage() {
         </button>
 
         {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         )}
@@ -153,13 +153,13 @@ export default function AlertDetailPage() {
             </div>
 
             {/* Elephant Alert banner */}
-            <div className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            <div className="rounded-lg border border-blue-600/30 bg-blue-600/10 px-4 py-3 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-amber-400">
+                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
                   Elephant Alert
                 </p>
-                <p className="text-xs text-amber-700 dark:text-amber-300/80 mt-0.5">
+                <p className="text-xs text-blue-700 dark:text-blue-300/80 mt-0.5">
                   Elephant Detected
                 </p>
               </div>
@@ -178,9 +178,9 @@ export default function AlertDetailPage() {
                   value={`${Math.round(alert.confidence * 100)}%`}
                   valueClassName={
                     alert.confidence >= 0.9
-                      ? "text-red-400"
+                      ? "text-red-500 dark:text-red-400"
                       : alert.confidence >= 0.7
-                        ? "text-amber-400"
+                        ? "text-amber-600 dark:text-amber-400"
                         : "text-muted-foreground"
                   }
                 />
@@ -236,7 +236,7 @@ export default function AlertDetailPage() {
             {/* Train Risk Assessment */}
             <div className="rounded-lg border border-orange-400/30 bg-orange-400/10 px-4 py-3">
               <div className="flex items-center gap-2 mb-2">
-                <TrainFront className="w-4 h-4 text-orange-400" />
+                <TrainFront className="w-4 h-4 text-orange-500" />
                 <p className="text-sm font-semibold text-orange-700 dark:text-orange-300">
                   Train Risk Assessment
                 </p>
@@ -293,7 +293,7 @@ export default function AlertDetailPage() {
               <Button
                 onClick={handleMarkReviewed}
                 disabled={marking || alert.status === "seen"}
-                className="w-full gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold"
+                className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
               >
                 <Check className="w-4 h-4" />
                 {alert.status === "seen" ? "Reviewed" : "Mark as Reviewed"}
@@ -302,7 +302,7 @@ export default function AlertDetailPage() {
                 onClick={handleDownload}
                 disabled={!alert.imageUrl}
                 variant="outline"
-                className="w-full gap-2 border-amber-400/40 text-amber-400 hover:bg-amber-400/10"
+                className="w-full gap-2 border-blue-600/40 text-blue-600 dark:text-blue-400 hover:bg-blue-600/10"
               >
                 <Download className="w-4 h-4" />
                 Download Image
@@ -325,7 +325,7 @@ interface DetailRowProps {
 function DetailRow({ icon: Icon, label, value, valueClassName }: DetailRowProps) {
   return (
     <div className="rounded-lg border border-border bg-card px-4 py-3 flex items-center gap-3">
-      <Icon className="w-4 h-4 text-amber-400 shrink-0" />
+      <Icon className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className={`text-sm font-semibold text-foreground truncate ${valueClassName ?? ""}`}>

@@ -79,8 +79,9 @@ export function DeviceMap({
           const isActive = activeDeviceIds.has(device.deviceId);
           const isSelected = device.deviceId === selectedDeviceId;
 
-          const color = isActive ? "#ef4444" : "#FF8C00";
-          const fill = isActive ? "#ef4444" : "#FF8C00";
+          // Active alerts = red, normal devices = brand blue
+          const color = isActive ? "#ef4444" : "#0511F2";
+          const fill = isActive ? "#ef4444" : "#0511F2";
 
           return (
             <CircleMarker

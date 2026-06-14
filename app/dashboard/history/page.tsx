@@ -27,7 +27,6 @@ export default function HistoryPage() {
     setLoading(true);
     setError(null);
 
-    // History view shows more than the dashboard's 50; bump the limit.
     const unsub = subscribeAlerts(
       (data) => {
         setAlerts(data);
@@ -104,7 +103,7 @@ export default function HistoryPage() {
     <div className="grid-bg">
       <div className="p-4 md:p-6 space-y-6">
         {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         )}
@@ -122,7 +121,7 @@ export default function HistoryPage() {
           <Button
             onClick={exportCsv}
             disabled={loading || filteredAlerts.length === 0}
-            className="gap-2 bg-amber-400 hover:bg-amber-500 text-black font-semibold"
+            className="gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
           >
             <Download className="w-4 h-4" />
             Export CSV

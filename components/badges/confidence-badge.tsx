@@ -8,20 +8,17 @@ interface ConfidenceBadgeProps {
  * - >= 0.9: red (high confidence threat)
  * - >= 0.7: amber (moderate)
  * - below: slate (low)
- *
- * Uses solid backgrounds + readable text colors (not low-opacity tints)
- * so the percentage is legible on both light and dark surfaces.
  */
 export function ConfidenceBadge({ confidence, className }: ConfidenceBadgeProps) {
   const pct = Math.round(confidence * 100);
 
   let colorClasses: string;
   if (confidence >= 0.9) {
-    colorClasses = "bg-red-500/15 text-red-500 border-red-500/30";
+    colorClasses = "bg-red-500/15 text-red-600 border-red-500/30 dark:text-red-400";
   } else if (confidence >= 0.7) {
-    colorClasses = "bg-amber-500/15 text-amber-600 border-amber-500/30 dark:text-amber-400";
+    colorClasses = "bg-amber-500/15 text-amber-700 border-amber-500/30 dark:text-amber-400";
   } else {
-    colorClasses = "bg-slate-500/15 text-slate-600 border-slate-500/30 dark:text-slate-300";
+    colorClasses = "bg-slate-500/15 text-slate-700 border-slate-500/30 dark:text-slate-300";
   }
 
   return (

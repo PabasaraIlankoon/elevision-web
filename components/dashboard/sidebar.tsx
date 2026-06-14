@@ -31,7 +31,7 @@ export function Sidebar() {
         <Link href="/" className="flex items-center gap-3">
           <Image src="/elevision-logo.png" alt="Elevision" width={60} height={60} className="rounded-md" />
           <div>
-            <h1 className="text-lg font-bold text-amber-400 leading-tight">
+            <h1 className="text-lg font-bold text-blue-600 dark:text-blue-400 leading-tight">
               Elevision
             </h1>
             <p className="text-xs text-muted-foreground">
@@ -55,8 +55,8 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
                 isActive
-                  ? "bg-amber-400/20 text-amber-400 border border-amber-400/30"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent/10"
+                  ? "bg-blue-600/15 text-blue-600 dark:text-blue-400 border border-blue-600/30"
+                  : "text-sidebar-foreground hover:bg-blue-600/5"
               }`}
             >
               <Icon className="w-4 h-4" />

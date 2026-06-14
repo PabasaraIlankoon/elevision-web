@@ -43,7 +43,7 @@ export function AlertCard({ alert, index = 0 }: AlertCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.05, 0.3) }}
       className={`rounded-lg border p-4 ${
-        isNew ? "border-amber-400/40 bg-amber-400/5" : "border-border bg-card"
+        isNew ? "border-blue-600/40 bg-blue-600/5" : "border-border bg-card"
       }`}
     >
       <div className="flex gap-4">
@@ -70,7 +70,7 @@ export function AlertCard({ alert, index = 0 }: AlertCardProps) {
               </p>
             </div>
             {isNew && (
-              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse" />
             )}
           </div>
           <p className="text-xs text-muted-foreground font-mono mb-3">
@@ -95,7 +95,7 @@ export function AlertCard({ alert, index = 0 }: AlertCardProps) {
                 asChild
                 variant="ghost"
                 size="sm"
-                className="text-amber-400 hover:text-amber-300 hover:bg-amber-400/10"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-600/10"
               >
                 <Link href={`/dashboard/alerts/${alert.id}`}>
                   View Details <ArrowRight className="w-3 h-3 ml-1" />
@@ -108,4 +108,3 @@ export function AlertCard({ alert, index = 0 }: AlertCardProps) {
     </motion.div>
   );
 }
-

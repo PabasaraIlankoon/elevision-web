@@ -13,7 +13,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { Clock, TrendingUp, Target, Zap } from "lucide-react";
@@ -135,13 +134,14 @@ export default function AnalyticsPage() {
     };
   }, [alerts]);
 
-  const COLORS = ["#FF8C00", "#16A34A", "#DC2626", "#1E40AF", "#8B5CF6"];
+  // Brand blue as primary, then accent colors from logo palette
+  const COLORS = ["#0511F2", "#164773", "#59B5D9", "#F2921D", "#F27127"];
 
   return (
     <div className="grid-bg">
       <div className="p-4 md:p-6 space-y-6">
         {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         )}
@@ -203,7 +203,7 @@ export default function AnalyticsPage() {
                   }}
                   labelStyle={{ color: "#F3F4F6" }}
                 />
-                <Bar dataKey="count" fill="#FF8C00" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="count" fill="#0511F2" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -284,7 +284,7 @@ export default function AnalyticsPage() {
               <Line
                 type="monotone"
                 dataKey="confidence"
-                stroke="#FF8C00"
+                stroke="#0511F2"
                 dot={false}
                 strokeWidth={2}
               />

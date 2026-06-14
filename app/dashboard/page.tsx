@@ -102,7 +102,7 @@ export default function DashboardPage() {
     <div className="grid-bg">
       <div className="p-4 md:p-6 space-y-6">
         {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         )}
@@ -111,7 +111,7 @@ export default function DashboardPage() {
         {activeAlert ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Image — large left tile, spans 2 cols and 2 rows */}
-            <div className="lg:col-span-2 lg:row-span-2 rounded-lg border border-amber-400/40 bg-card overflow-hidden relative min-h-70 lg:min-h-90">
+            <div className="lg:col-span-2 lg:row-span-2 rounded-lg border border-blue-600/40 bg-card overflow-hidden relative min-h-70 lg:min-h-90">
               {activeAlert.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -124,7 +124,7 @@ export default function DashboardPage() {
               )}
               {/* Overlay info */}
               <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-4 pt-12">
-                <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold mb-1">
+                <div className="flex items-center gap-2 text-blue-400 text-xs font-semibold mb-1">
                   <Activity className="w-3.5 h-3.5" />
                   ACTIVE ALERT
                 </div>
@@ -143,11 +143,11 @@ export default function DashboardPage() {
             </div>
 
             {/* Action card */}
-            <div className="rounded-lg border border-amber-400/40 bg-card p-4 flex flex-col gap-3 justify-center">
+            <div className="rounded-lg border border-blue-600/40 bg-card p-4 flex flex-col gap-3 justify-center">
               <Button
                 onClick={handleAcknowledge}
                 disabled={acking}
-                className="w-full gap-2 bg-amber-400 hover:bg-amber-500 text-black font-semibold"
+                className="w-full gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
               >
                 <Check className="w-4 h-4" />
                 Acknowledge

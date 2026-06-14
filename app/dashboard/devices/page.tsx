@@ -39,7 +39,7 @@ export default function DevicesPage() {
     <div className="grid-bg">
       <div className="p-4 md:p-6 space-y-6">
         {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         )}
