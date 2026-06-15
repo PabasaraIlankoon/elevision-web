@@ -33,9 +33,7 @@ export default function TrainSchedulePage() {
 
   const approaching = useMemo(
     () =>
-      selectedStation
-        ? getApproachingTrains(selectedStation, 180, now)
-        : [],
+      selectedStation ? getApproachingTrains(selectedStation, 180, now) : [],
     [selectedStation, now],
   );
 
@@ -43,9 +41,7 @@ export default function TrainSchedulePage() {
     <div className="grid-bg">
       <div className="p-4 md:p-6 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Train Schedule
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground">Train Schedule</h1>
           <p className="text-sm text-muted-foreground mt-1">
             High-risk trains through the elephant corridor
           </p>
@@ -74,8 +70,8 @@ export default function TrainSchedulePage() {
             <div className="mt-4 space-y-2">
               {approaching.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No high-risk trains scheduled near {selectedStation} within
-                  3 hours.
+                  No high-risk trains scheduled near {selectedStation} within 3
+                  hours.
                 </p>
               ) : (
                 approaching.map((entry, i) => (
@@ -107,7 +103,7 @@ export default function TrainSchedulePage() {
                           ? "text-muted-foreground"
                           : entry.minutesAway <= 30
                             ? "text-red-500 dark:text-red-400"
-                            : "text-amber-600 dark:text-amber-400"
+                            : "text-blue-600 dark:text-blue-400"
                       }`}
                     >
                       {minutesLabel(entry.minutesAway)}

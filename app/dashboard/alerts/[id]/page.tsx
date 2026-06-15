@@ -148,7 +148,11 @@ export default function AlertDetailPage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <img src="/placeholder.png" alt="No detection image" className="w-full h-full object-cover opacity-60" />
+                <img
+                  src="/placeholder.png"
+                  alt="No detection image"
+                  className="w-full h-full object-cover opacity-60"
+                />
               )}
             </div>
 
@@ -180,7 +184,7 @@ export default function AlertDetailPage() {
                     alert.confidence >= 0.9
                       ? "text-red-500 dark:text-red-400"
                       : alert.confidence >= 0.7
-                        ? "text-amber-600 dark:text-amber-400"
+                        ? "text-blue-600 dark:text-blue-400"
                         : "text-muted-foreground"
                   }
                 />
@@ -322,13 +326,20 @@ interface DetailRowProps {
   valueClassName?: string;
 }
 
-function DetailRow({ icon: Icon, label, value, valueClassName }: DetailRowProps) {
+function DetailRow({
+  icon: Icon,
+  label,
+  value,
+  valueClassName,
+}: DetailRowProps) {
   return (
     <div className="rounded-lg border border-border bg-card px-4 py-3 flex items-center gap-3">
       <Icon className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-xs text-muted-foreground">{label}</p>
-        <p className={`text-sm font-semibold text-foreground truncate ${valueClassName ?? ""}`}>
+        <p
+          className={`text-sm font-semibold text-foreground truncate ${valueClassName ?? ""}`}
+        >
           {value}
         </p>
       </div>

@@ -43,7 +43,7 @@ export function AlertCard({ alert, index = 0 }: AlertCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.05, 0.3) }}
       className={`rounded-lg border p-4 ${
-        isNew ? "border-blue-600/40 bg-blue-600/5" : "border-border bg-card"
+        isNew ? "border-blue-600/40 bg-blue-600/5" : "border-gray-400 bg-white"
       }`}
     >
       <div className="flex gap-4">
