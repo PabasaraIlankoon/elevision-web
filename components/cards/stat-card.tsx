@@ -15,11 +15,11 @@ export function StatCard({ icon: Icon, label, value, accent }: StatCardProps) {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             {label}
           </p>
-          <p className={`text-2xl font-bold mt-2 ${accent ? "text-amber-400" : "text-foreground"}`}>
+          <p className={`text-2xl font-extrabold mt-2 ${accent ? "text-blue-600 dark:text-blue-400" : "text-foreground"}`}>
             {value}
           </p>
         </div>
-        <Icon className={`w-5 h-5 ${accent ? "text-amber-400/60" : "text-muted-foreground"}`} />
+        <Icon className={`w-5 h-5 ${accent ? "text-blue-600/60 dark:text-blue-400/60" : "text-muted-foreground"}`} />
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export function EmergencyBanner({ activeDetections }: EmergencyBannerProps) {
       <div className="flex items-center gap-3">
         <AlertTriangle className="w-5 h-5 text-red-400 animate-pulse" />
         <div>
-          <p className="text-sm font-semibold text-red-300">Active Detection Alert</p>
+          <p className="text-sm font-semibold text-red-400">Active Detection Alert</p>
           <p className="text-xs text-red-400/70">
             {activeDetections} elephant detection{activeDetections !== 1 ? "s" : ""} require attention
           </p>

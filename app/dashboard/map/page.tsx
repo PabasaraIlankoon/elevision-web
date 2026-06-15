@@ -75,7 +75,7 @@ export default function MapPage() {
           <h1 className="text-xl font-bold text-foreground mb-4">
             Sri Lanka Railway Zone Map
           </h1>
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             {error}
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function MapPage() {
         <div className="w-64 border-l border-border bg-card overflow-y-auto">
           <div className="p-4 border-b border-border sticky top-0 bg-card z-10">
             <h2 className="font-semibold text-foreground text-sm flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-amber-400" />
+              <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               Devices
             </h2>
             <p className="text-xs text-muted-foreground mt-1">
@@ -121,7 +121,7 @@ export default function MapPage() {
                   onClick={() => setSelectedDevice(device.deviceId)}
                   className={`w-full text-left p-4 transition-colors ${
                     isSelected
-                      ? "bg-amber-400/10 border-l-2 border-amber-400"
+                      ? "bg-blue-600/10 border-l-2 border-blue-600"
                       : "hover:bg-muted"
                   }`}
                 >
@@ -135,7 +135,7 @@ export default function MapPage() {
                     {device.name}
                   </p>
                   {alert && (
-                    <p className="text-xs text-red-400 mt-1">
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                       {alert.status === "new"
                         ? "Active alert"
                         : "Last: " +

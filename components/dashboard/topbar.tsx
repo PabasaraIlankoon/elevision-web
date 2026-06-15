@@ -1,6 +1,6 @@
 "use client";
 
-import { Shield, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -21,7 +21,6 @@ export function TopBar() {
   return (
     <header className="md:hidden border-b border-border bg-card sticky top-0 z-30">
       <div className="h-16 px-4 md:px-6 flex items-center justify-between scan-line">
-        {/* Left — hamburger + logo */}
         <div className="flex items-center gap-3 w-full justify-between">
           <Sheet>
             <SheetTrigger asChild>
@@ -33,19 +32,13 @@ export function TopBar() {
               </button>
             </SheetTrigger>
 
-            {/*
-              The Sheet portal renders outside the normal DOM so CSS variables
-              from :root don't always reach it. We apply the .dark class directly
-              on SheetContent and hard-code the sidebar background so it's always
-              solid regardless of portal context.
-            */}
             <SheetContent
               side="left"
-              className="dark p-0 border-r border-[hsl(216,20%,18%)] w-70"
-              style={{ backgroundColor: "hsl(0, 0%, 100%)" }}
+              className="dark p-0 border-r border-[hsl(222,25%,22%)] w-70"
+              style={{ backgroundColor: "hsl(222, 47%, 6%)" }}
             >
               {/* Header */}
-              <SheetHeader className="flex flex-row gap-4 items-center px-4 py-5 border-b border-[hsl(216,20%,18%)]">
+              <SheetHeader className="flex flex-row gap-4 items-center px-4 py-5 border-b border-[hsl(222,25%,22%)]">
                 <SheetTitle className="flex items-center gap-2">
                   <Image
                     src="/elevision-logo.png"
@@ -56,10 +49,10 @@ export function TopBar() {
                   />
                 </SheetTitle>
                 <div className="flex flex-col gap-1">
-                  <span className="text-amber-400 text-lg font-bold">
+                  <span className="text-blue-400 text-lg font-bold">
                     Elevision
                   </span>
-                  <p className="text-xs text-[hsl(0, 0%, 0%)] mt-0.5 font-normal">
+                  <p className="text-xs text-slate-400 mt-0.5 font-normal">
                     Elephant Detection System
                   </p>
                 </div>
@@ -79,8 +72,8 @@ export function TopBar() {
                         href={item.href}
                         className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-sm font-medium ${
                           isActive
-                            ? "bg-amber-400/20 text-amber-400 border border-amber-400/30"
-                            : "text-[hsl(216,20%,18%)] hover:bg-[hsl(216,20%,14%)] hover:text-white"
+                            ? "bg-blue-600/20 text-blue-400 border border-blue-600/30"
+                            : "text-slate-300 hover:bg-slate-800 hover:text-white"
                         }`}
                       >
                         <Icon className="w-4 h-4 shrink-0" />
@@ -92,8 +85,8 @@ export function TopBar() {
               </nav>
 
               {/* Footer */}
-              <SheetFooter className="absolute bottom-0 left-0 right-0 px-6 py-4 border-t border-[hsl(216,20%,18%)]">
-                <p className="text-xs text-[hsl(0,0%,45%)]">Elevision v1.0</p>
+              <SheetFooter className="absolute bottom-0 left-0 right-0 px-6 py-4 border-t border-[hsl(222,25%,22%)]">
+                <p className="text-xs text-slate-500">Elevision v1.0</p>
               </SheetFooter>
             </SheetContent>
           </Sheet>
@@ -101,7 +94,7 @@ export function TopBar() {
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold text-amber-400">Elevision</h1>
+              <h1 className="text-lg font-bold text-blue-600 dark:text-blue-400">Elevision</h1>
               <Image
                 src="/elevision-logo.png"
                 alt="Elevision"
