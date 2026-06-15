@@ -15,7 +15,7 @@ export function StatCard({ icon: Icon, label, value, accent }: StatCardProps) {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             {label}
           </p>
-          <p className={`text-2xl font-bold mt-2 ${accent ? "text-blue-600 dark:text-blue-400" : "text-foreground"}`}>
+          <p className={`text-2xl font-extrabold mt-2 ${accent ? "text-blue-600 dark:text-blue-400" : "text-foreground"}`}>
             {value}
           </p>
         </div>

@@ -159,7 +159,7 @@ export default function AlertDetailPage() {
                 <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
                   Elephant Alert
                 </p>
-                <p className="text-xs text-blue-700 dark:text-blue-300/80 mt-0.5">
+                <p className="text-xs text-blue-700 dark:text-blue-400/80 mt-0.5">
                   Elephant Detected
                 </p>
               </div>
@@ -280,7 +280,7 @@ export default function AlertDetailPage() {
             {/* Confidence explanation */}
             <div className="rounded-lg border border-sky-400/30 bg-sky-400/10 px-4 py-3 flex items-start gap-3">
               <Info className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0 mt-0.5" />
-              <p className="text-sm text-sky-800 dark:text-sky-200 font-medium">
+              <p className="text-sm text-sky-800 dark:text-sky-300 font-medium">
                 <span className="font-semibold">
                   {Math.round(alert.confidence * 100)}%
                 </span>{" "}
